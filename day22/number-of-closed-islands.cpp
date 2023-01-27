@@ -1,35 +1,33 @@
 class Solution {
 public:
-    int ans = 0, count = 0;
-    void dfs(int i, int j, vector<vector<int>>& grid) {
-        if (isValidDimentions(i, j, grid) && grid[i][j] == 0) {
-                grid[i][j] = -1;
-
-                dfs(i + 1, j, grid);
-                dfs(i - 1, j, grid);
-                dfs(i, j - 1, grid);
-                dfs(i, j + 1, grid);
-            } else if (isValidDimentions(i, j, grid) 
-                        && (grid[i][j] == -1 || grid[i][j] == 1))
-                            return;
-            else count += 1;
+    int dfs(vector<vector<int>>&g,int i,int j,vector<vector<int>>&vis){
+        if(i==0 || j==0 || i==g.size()-1 || j==g[0].size()-1)return 0;
+        vis[i][j] = 1;
+        int t1 = 1;
+        if(i+1<g.size() && !vis[i+1][j] && g[i+1][j]==0){
+            t1 &= dfs(g,i+1,j,vis);
+        }
+        if(i-1>=0 && !vis[i-1][j] && !g[i-1][j] ){
+            t1 &= dfs(g,i-1,j,vis);
+        }
+        if(j+1<g[0].size() && !vis[i][j+1] && !g[i][j+1]){
+            t1 &= dfs(g,i,j+1,vis);
+        }
+        if(j-1>=0 && !vis[i][j-1] && !g[i][j-1]){
+            t1 &= dfs(g,i,j-1,vis);
+        }
+        return t1;
     }
-
-    bool isValidDimentions(int i, int j, vector<vector<int>>& grid) {
-        return i >= 0 && i < grid.size() && j >= 0 &&  j < grid[0].size();
-    }
-
     int closedIsland(vector<vector<int>>& grid) {
-        for (int i = 0; i < grid.size(); i++) {
-            for (int j = 0; j < grid[i].size(); j++) {
-                if (grid[i][j] == 0) {
-                    count = 0;
-                    dfs(i, j, grid);
-                    if (count == 0) ans += 1;
+        int ans = 0;
+        vector<vector<int>>vis(grid.size(),vector<int>(grid[0].size()));
+        for(int i=0;i<grid.size();++i){
+            for(int j=0;j<grid[0].size();++j){
+                if(!vis[i][j] && !grid[i][j]){
+                    ans += dfs(grid,i,j,vis);
                 }
             }
         }
-
         return ans;
     }
 };
